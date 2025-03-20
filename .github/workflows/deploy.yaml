@@ -23,15 +23,15 @@ jobs:
         with:
           version: "latest"
 
-      - name: Configure Kubernetes context
+      - name: Configure kubernetes context
         run: |
           echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > kubeconfig.yaml
           export KUBECONFIG=kubeconfig.yaml
 
-      - name: Deploy to Kubernetes
+      - name: Deploy to kubernetes
         run: |
-          kubectl apply -f Kubernetes/deployment.yaml
-          kubectl apply -f Kubernetes/service.yaml
+          kubectl apply -f kubernetes/deployment.yaml
+          kubectl apply -f kubernetes/service.yaml
 
       - name: Verify deployment
         run: kubectl rollout status deployment/node-app
