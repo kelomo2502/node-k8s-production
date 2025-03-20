@@ -23,12 +23,15 @@ jobs:
         with:
           version: "latest"
 
-      - name: Configure kubernetes context
+      - name: Configure Kubernetes context
         run: |
           echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > kubeconfig.yaml
           export KUBECONFIG=kubeconfig.yaml
 
-      - name: Deploy to kubernetes
+      - name: Verify cluster access
+        run: kubectl get nodes
+
+      - name: Deploy to Kubernetes
         run: |
           kubectl apply -f kubernetes/deployment.yaml
           kubectl apply -f kubernetes/service.yaml
