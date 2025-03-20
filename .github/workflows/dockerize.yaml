@@ -5,6 +5,8 @@ on:
     workflows: ["Test"]
     types:
       - completed
+    branches:
+      - main  # Ensure this workflow only runs for the main branch
 
 jobs:
   dockerize:
@@ -13,6 +15,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2

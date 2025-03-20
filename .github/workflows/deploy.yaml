@@ -5,6 +5,8 @@ on:
     workflows: ["Dockerize"]
     types:
       - completed
+    branches:
+      - main  # Ensure this workflow only runs for the main branch
 
 jobs:
   deploy:
@@ -13,6 +15,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}  # Checkout the correct branch
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
@@ -21,7 +25,7 @@ jobs:
 
       - name: Configure Kubernetes context
         run: |
-          echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig.yaml
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > kubeconfig.yaml
           export KUBECONFIG=kubeconfig.yaml
 
       - name: Deploy to Kubernetes
