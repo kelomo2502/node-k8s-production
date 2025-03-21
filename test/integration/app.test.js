@@ -1,10 +1,14 @@
 const request = require('supertest');
-const { app, server } = require('../../server'); // Import both app and server
+const { startServer } = require('../../server'); // Import startServer
 
 describe('Integration Tests', () => {
+  let server;
+
   beforeAll((done) => {
-    // Server is already started in server.js, so no need to start it again
-    done();
+    // Start the server before running tests
+    const { server: srv } = startServer(3001);
+    server = srv;
+    server.on('listening', done);
   });
 
   afterAll((done) => {
@@ -13,13 +17,13 @@ describe('Integration Tests', () => {
   });
 
   it('GET / should return "Hello from simple Node app!"', async () => {
-    const response = await request(app).get('/');
+    const response = await request(server).get('/');
     expect(response.status).toBe(200);
     expect(response.text).toBe('Hello from simple Node app!');
   });
 
   it('GET /nonexistent should return 404', async () => {
-    const response = await request(app).get('/nonexistent');
+    const response = await request(server).get('/nonexistent');
     expect(response.status).toBe(404);
   });
 });

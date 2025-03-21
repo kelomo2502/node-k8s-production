@@ -11,10 +11,18 @@ app.get('/', (req, res) => {
   res.send('Hello from simple Node app!');
 });
 
-// Start the server on an available port
-const server = app.listen(0, () => {
-  console.log(`Server running on port ${server.address().port}`);
-});
+// Function to start the server
+const startServer = (port = 3000) => {
+  const server = app.listen(port, () => {
+    console.log(`Server running on port ${server.address().port}`);
+  });
+  return { app, server };
+};
 
-// Export both app and server for testing
-module.exports = { app, server };
+// Export the startServer function
+module.exports = { startServer };
+
+// Start the server if this file is run directly
+if (require.main === module) {
+  const { server } = startServer(3000);
+}
