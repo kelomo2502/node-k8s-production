@@ -18,26 +18,34 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_branch }}  # Checkout the correct branch
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
         with:
           version: "latest"
 
-      - name: Configure Kubernetes context
+      - name: Update kubeconfig for EKS
         run: |
-          echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > kubeconfig.yaml
-          export KUBECONFIG=kubeconfig.yaml
-
-      - name: Debug kubeconfig
-        run: cat kubeconfig.yaml
+          aws eks update-kubeconfig --name my-eks-cluster --region ${{ secrets.AWS_REGION }} --kubeconfig kubeconfig.yaml
 
       - name: Verify cluster access
-        run: kubectl get nodes
+        run: |
+          export KUBECONFIG=$(pwd)/kubeconfig.yaml
+          kubectl get nodes
 
       - name: Deploy to Kubernetes
         run: |
+          export KUBECONFIG=$(pwd)/kubeconfig.yaml
           kubectl apply -f kubernetes/deployment.yaml
           kubectl apply -f kubernetes/service.yaml
 
       - name: Verify deployment
-        run: kubectl rollout status deployment/node-app
+        run: |
+          export KUBECONFIG=$(pwd)/kubeconfig.yaml
+          kubectl rollout status deployment/node-app
