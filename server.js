@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -12,6 +11,10 @@ app.get('/', (req, res) => {
   res.send('Hello from simple Node app!');
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Start the server on an available port
+const server = app.listen(0, () => {
+  console.log(`Server running on port ${server.address().port}`);
 });
+
+// Export both app and server for testing
+module.exports = { app, server };

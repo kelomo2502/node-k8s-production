@@ -1,17 +1,15 @@
 const request = require('supertest');
-const app = require('../../server'); // Import your Express app
+const { app, server } = require('../../server'); // Import both app and server
 
 describe('Integration Tests', () => {
-  let server;
-
-  beforeAll(() => {
-    // Start the server before running tests
-    server = app.listen(3000);
+  beforeAll((done) => {
+    // Server is already started in server.js, so no need to start it again
+    done();
   });
 
-  afterAll(() => {
+  afterAll((done) => {
     // Close the server after tests are done
-    server.close();
+    server.close(done);
   });
 
   it('GET / should return "Hello from simple Node app!"', async () => {
