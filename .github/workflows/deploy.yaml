@@ -28,7 +28,7 @@ jobs:
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
         with:
-          version: "v1.27"  # Replace with your EKS cluster's Kubernetes version
+          version: "latest"
 
       - name: Update kubeconfig for EKS
         run: |
