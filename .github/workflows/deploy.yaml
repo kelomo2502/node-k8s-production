@@ -28,7 +28,7 @@ jobs:
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
         with:
-          version: "latest"
+          version: "v1.27"  # Replace with your EKS cluster's Kubernetes version
 
       - name: Update kubeconfig for EKS
         run: |
@@ -48,4 +48,8 @@ jobs:
       - name: Verify deployment
         run: |
           export KUBECONFIG=$(pwd)/kubeconfig.yaml
-          kubectl rollout status deployment/node-app
+          kubectl rollout status deployment/node-app --timeout=5m
+
+      - name: Clean up kubeconfig
+        run: |
+          rm -f kubeconfig.yaml
