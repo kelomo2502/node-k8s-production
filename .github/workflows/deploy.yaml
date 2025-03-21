@@ -28,6 +28,9 @@ jobs:
           echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > kubeconfig.yaml
           export KUBECONFIG=kubeconfig.yaml
 
+      - name: Debug kubeconfig
+        run: cat kubeconfig.yaml
+
       - name: Verify cluster access
         run: kubectl get nodes
 
